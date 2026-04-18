@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Darksteel Mail — Zone 1 Postcard with Premium Back Spots</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #d8d6d0;
+    background-image:
+      radial-gradient(circle at 20% 30%, #dfdcd5 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, #cfccc5 0%, transparent 40%);
+    font-family: 'Manrope', sans-serif;
+    color: #1a1a1a;
+    padding: 3rem 2rem;
+    min-height: 100vh;
+  }
+
+  .page { max-width: 1280px; margin: 0 auto; }
+
+  .page-header { text-align: center; margin-bottom: 3rem; }
+  .page-header .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #666;
+    margin-bottom: 0.6rem;
+  }
+  .page-header h1 {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    font-size: 2.4rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+  }
+  .page-header p {
+    color: #555;
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  .revenue-bar {
+    max-width: 720px;
+    margin: 1.5rem auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    padding: 1rem 1.2rem;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .revenue-bar .cell { text-align: center; }
+  .revenue-bar .cell .val {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.5rem;
+    color: #0066cc;
+    line-height: 1;
+  }
+  .revenue-bar .cell .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #666;
+    margin-top: 0.3rem;
+  }
+
+  .card-stage {
+    display: grid;
+    gap: 3.5rem;
+    margin-bottom: 4rem;
+    margin-top: 2.5rem;
+  }
+
+  .side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .side-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: #777;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .side-label::before,
+  .side-label::after {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: #aaa;
+  }
+  .side-label .tag {
+    background: #00aaff;
+    color: #0a0a0a;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 960px;
+    aspect-ratio: 11 / 6.5;
+    border-radius: 4px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.08),
+      0 10px 30px rgba(0,0,0,0.18),
+      0 30px 60px rgba(0,0,0,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ============ FRONT (unchanged from before) ============ */
+  .front {
+    background: #0a0a0a;
+    color: #fff;
+    display: grid;
+    grid-template-rows: 58px 1fr 36px;
+    font-family: 'Manrope', sans-serif;
+  }
+  .front-top {
+    background: #00aaff;
+    color: #0a0a0a;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .front-top .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Anton', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .front-top .brand-mark {
+    width: 22px;
+    height: 22px;
+    background: #0a0a0a;
+    transform: rotate(45deg);
+    position: relative;
+  }
+  .front-top .brand-mark::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: #00aaff;
+  }
+  .front-top .tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-align: right;
+  }
+
+  .spots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2px;
+    background: #1a1a1a;
+    padding: 2px;
+  }
+  .spot {
+    background: #0a0a0a;
+    padding: 0.7rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .spot-head {
+    font-family: 'Anton', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1.05;
+    margin-bottom: 0.25rem;
+  }
+  .spot-sub {
+    font-size: 0.58rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.3rem;
+  }
+  .spot-offer {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: #00aaff;
+    margin: auto 0;
+  }
+  .spot-offer em { font-style: italic; }
+  .spot-cta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: #fff;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding-top: 0.3rem;
+    border-top: 1px solid #2a2a2a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .spot-cta .phone { color: #00aaff; }
+
+  .spot-2 { background: #1a1a1a; }
+  .spot-2 .spot-offer { color: #ff2244; }
+  .spot-2 .spot-cta .phone { color: #ff2244; }
+  .spot-3 { background: #00aaff; color: #0a0a0a; }
+  .spot-3 .spot-head { color: #0a0a0a; }
+  .spot-3 .spot-sub { color: rgba(10,10,10,0.55); }
+  .spot-3 .spot-offer { color: #0a0a0a; }
+  .spot-3 .spot-cta { color: #0a0a0a; border-top: 1px solid rgba(10,10,10,0.25); }
+  .spot-3 .spot-cta .phone { color: #0a0a0a; }
+  .spot-4 .spot-offer { color: #ffaa00; }
+  .spot-4 .spot-cta .phone { color: #ffaa00; }
+  .spot-5 { background: #1a1a1a; }
+  .spot-5 .spot-offer { color: #00ccaa; }
+  .spot-5 .spot-cta .phone { color: #00ccaa; }
+  .spot-6 { background: #ff2244; color: #0a0a0a; }
+  .spot-6 .spot-head { color: #0a0a0a; }
+  .spot-6 .spot-sub { color: rgba(10,10,10,0.55); }
+  .spot-6 .spot-offer { color: #0a0a0a; }
+  .spot-6 .spot-cta { color: #0a0a0a; border-top: 1px solid rgba(10,10,10,0.25); }
+  .spot-6 .spot-cta .phone { color: #0a0a0a; }
+  .spot-7 .spot-offer { color: #00aaff; }
+  .spot-7 .spot-cta .phone { color: #00aaff; }
+  .spot-8 { background: #1a1a1a; }
+  .spot-8 .spot-offer { color: #ff88ee; }
+  .spot-8 .spot-cta .phone { color: #ff88ee; }
+
+  .front-bottom {
+    background: #0a0a0a;
+    color: #555;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #2a2a2a;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .front-bottom .msg { color: #888; }
+  .front-bottom .msg strong { color: #00aaff; font-weight: 500; }
+  .front-bottom .issue { color: #555; }
+
+  /* ============ BACK v2 — brand + 2 hero spots + USPS zones ============ */
+  .back {
+    background: #0a0a0a;
+    color: #fff;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    position: relative;
+  }
+  .back::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem; bottom: 1.5rem; left: 52%;
+    width: 1px;
+    background: repeating-linear-gradient(180deg, #2a2a2a 0 4px, transparent 4px 8px);
+  }
+
+  /* LEFT SIDE — brand + 2 premium hero spots */
+  .back-left {
+    padding: 1.2rem 1.4rem;
+    display: grid;
+    grid-template-rows: auto 1fr 1fr;
+    gap: 0.7rem;
+    padding-right: 1.2rem;
+  }
+
+  .brand-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .brand-strip .brand-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .brand-strip .mark {
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #00aaff, #ff2244);
+    transform: rotate(45deg);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .brand-strip .mark::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: #0a0a0a;
+  }
+  .brand-strip .name {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .brand-strip .issue {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: #666;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: right;
+    line-height: 1.4;
+  }
+  .brand-strip .issue strong {
+    color: #00aaff;
+    font-weight: 500;
+  }
+
+  /* Premium hero spot */
+  .hero-spot {
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    padding: 0.8rem 1rem;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0.8rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-spot .premium-tag {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #00aaff;
+    color: #0a0a0a;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.52rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .hero-spot .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .hero-spot .hero-brand {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 0.15rem;
+  }
+  .hero-spot .hero-category {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.4rem;
+  }
+  .hero-spot .hero-pitch {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.82rem;
+    color: #ddd;
+    line-height: 1.25;
+    margin-bottom: 0.4rem;
+  }
+  .hero-spot .hero-pitch strong {
+    color: #00aaff;
+    font-style: normal;
+    font-weight: 500;
+    font-family: 'Anton', sans-serif;
+    letter-spacing: 0.02em;
+  }
+  .hero-spot .hero-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #666;
+    padding-top: 0.4rem;
+    border-top: 1px solid #1f1f1f;
+  }
+  .hero-spot .hero-cta .phone {
+    color: #00aaff;
+    font-size: 0.7rem;
+  }
+  .hero-spot .hero-right {
+    background: #1a1a1a;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    gap: 0.3rem;
+  }
+  .hero-spot .offer-big {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.9rem;
+    color: #00aaff;
+    line-height: 0.95;
+  }
+  .hero-spot .offer-big small {
+    font-size: 0.9rem;
+    display: block;
+    color: #fff;
+    letter-spacing: 0.05em;
+  }
+  .hero-spot .offer-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.52rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-align: center;
+  }
+
+  /* Hero spot 2 — different accent */
+  .hero-spot-2 .hero-brand { color: #fff; }
+  .hero-spot-2 .hero-pitch strong { color: #ff8866; }
+  .hero-spot-2 .hero-cta .phone { color: #ff8866; }
+  .hero-spot-2 .offer-big { color: #ff8866; }
+  .hero-spot-2 .premium-tag { background: #ff8866; }
+
+  /* RIGHT SIDE — USPS zones */
+  .back-right {
+    padding: 1.2rem 1.4rem 1.2rem 1.8rem;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 0.6rem;
+  }
+
+  .indicia-zone {
+    justify-self: end;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.52rem;
+    text-align: center;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #666;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #bbb;
+    background: #0a0a0a;
+  }
+
+  .return-addr {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    line-height: 1.5;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .network-promo {
+    align-self: center;
+    padding: 0.6rem 0.8rem;
+    background: #0e1a24;
+    border-left: 2px solid #00aaff;
+    border-radius: 0;
+  }
+  .network-promo .head {
+    font-family: 'Anton', sans-serif;
+    font-size: 0.85rem;
+    color: #fff;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+    line-height: 1;
+  }
+  .network-promo .head em {
+    color: #00aaff;
+    font-style: italic;
+  }
+  .network-promo .sub {
+    font-size: 0.58rem;
+    color: #aaa;
+    line-height: 1.5;
+    margin-bottom: 0.4rem;
+  }
+  .network-promo .link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: #00aaff;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .address-block {
+    align-self: end;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    text-transform: uppercase;
+    color: #ddd;
+    padding: 0.5rem 0.7rem;
+    border-top: 1px solid #2a2a2a;
+  }
+
+  /* ============ LEGEND ============ */
+  .legend {
+    max-width: 960px;
+    margin: 2rem auto 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 1.8rem 2rem;
+  }
+  .legend h3 {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    color: #1a1a1a;
+  }
+  .legend > p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.4rem;
+    margin-top: 1rem;
+  }
+  .legend-item { display: flex; gap: 0.8rem; }
+  .legend-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: #0066cc;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .legend-item h4 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .legend-item p {
+    font-size: 0.78rem;
+    color: #555;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .pricing-table {
+    margin-top: 1.6rem;
+    padding-top: 1.3rem;
+    border-top: 1px dashed #ccc;
+  }
+  .pricing-table h4 {
+    font-family: 'Anton', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-bottom: 0.7rem;
+    color: #1a1a1a;
+  }
+  .pricing-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .pricing-table th, .pricing-table td {
+    padding: 0.5rem 0.6rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+  .pricing-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #666;
+    border-bottom: 1px solid #aaa;
+  }
+  .pricing-table tr:last-child td { border-bottom: none; }
+  .pricing-table tr.total td {
+    border-top: 1px solid #aaa;
+    border-bottom: none;
+    padding-top: 0.7rem;
+    font-weight: 700;
+    color: #0066cc;
+  }
+  .pricing-table .num {
+    font-family: 'JetBrains Mono', monospace;
+    text-align: right;
+  }
+
+  @media (max-width: 820px) {
+    body { padding: 1.5rem 1rem; }
+    .page-header h1 { font-size: 1.6rem; }
+    .revenue-bar { grid-template-columns: 1fr; }
+    .card { max-width: 100%; }
+    .spots { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 1fr); }
+    .back { padding: 0; grid-template-columns: 1fr; }
+    .back::before { display: none; }
+    .back-left { padding: 1rem; padding-right: 1rem; padding-bottom: 1rem; border-bottom: 1px dashed #2a2a2a; }
+    .back-right { padding: 1rem; }
+    .hero-spot { grid-template-columns: 1fr; }
+    .front-top .tagline { display: none; }
+    .front-bottom .issue { display: none; }
+    .pricing-table { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="page-header">
+    <div class="eyebrow">Darksteel Mail · Zone 1 postcard · 6.5" × 11" jumbo · v2 with premium back spots</div>
+    <h1>Front: 8 standard spots · Back: 2 premium hero spots</h1>
+    <p>The upsell version. Front retains the clean 8-spot grid at standard pricing. Back adds two larger hero placements at premium pricing — same USPS compliance, significantly higher revenue per drop.</p>
+
+    <div class="revenue-bar">
+      <div class="cell">
+        <div class="val">10</div>
+        <div class="lbl">Advertisers / drop</div>
+      </div>
+      <div class="cell">
+        <div class="val">$6,970</div>
+        <div class="lbl">Revenue / drop (mixed)</div>
+      </div>
+      <div class="cell">
+        <div class="val">+75%</div>
+        <div class="lbl">vs front-only</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRONT -->
+  <div class="card-stage">
+    <div class="side">
+      <div class="side-label">Side A · Non-address · 8 standard spots</div>
+      <div class="card front">
+
+        <div class="front-top">
+          <div class="brand">
+            <div class="brand-mark"></div>
+            <span>Darksteel Mail</span>
+          </div>
+          <div class="tagline">Eight local businesses · One mailbox · Tonawanda · May 2026</div>
+        </div>
+
+        <div class="spots">
+          <div class="spot spot-1">
+            <div>
+              <div class="spot-head">Ironside HVAC</div>
+              <div class="spot-sub">Heating · cooling · service</div>
+            </div>
+            <div class="spot-offer"><em>$49</em> tune-up</div>
+            <div class="spot-cta">
+              <span>ironsidehvac.com</span>
+              <span class="phone">716 · 555 · 0142</span>
+            </div>
+          </div>
+          <div class="spot spot-2">
+            <div>
+              <div class="spot-head">Laurel Dental Co.</div>
+              <div class="spot-sub">Cosmetic · family · implants</div>
+            </div>
+            <div class="spot-offer"><em>$79</em> new-patient exam</div>
+            <div class="spot-cta">
+              <span>laureldental.com</span>
+              <span class="phone">716 · 555 · 0187</span>
+            </div>
+          </div>
+          <div class="spot spot-3">
+            <div>
+              <div class="spot-head">Radiance Med Spa</div>
+              <div class="spot-sub">Botox · filler · laser</div>
+            </div>
+            <div class="spot-offer"><em>$9</em>/unit Botox</div>
+            <div class="spot-cta">
+              <span>radianceaesthetics.com</span>
+              <span class="phone">716 · 555 · 0124</span>
+            </div>
+          </div>
+          <div class="spot spot-4">
+            <div>
+              <div class="spot-head">North Main Auto</div>
+              <div class="spot-sub">Repair · diagnostics · tires</div>
+            </div>
+            <div class="spot-offer"><em>$29</em> oil change</div>
+            <div class="spot-cta">
+              <span>northmainauto.com</span>
+              <span class="phone">716 · 555 · 0156</span>
+            </div>
+          </div>
+          <div class="spot spot-5">
+            <div>
+              <div class="spot-head">Green Thumb Lawn</div>
+              <div class="spot-sub">Mowing · landscaping · cleanups</div>
+            </div>
+            <div class="spot-offer"><em>15%</em> off first service</div>
+            <div class="spot-cta">
+              <span>greenthumbwny.com</span>
+              <span class="phone">716 · 555 · 0173</span>
+            </div>
+          </div>
+          <div class="spot spot-6">
+            <div>
+              <div class="spot-head">Koa Pizza &amp; Subs</div>
+              <div class="spot-sub">Brick-oven · wings · catering</div>
+            </div>
+            <div class="spot-offer"><em>Large</em> pie $12.99</div>
+            <div class="spot-cta">
+              <span>koapizza.com</span>
+              <span class="phone">716 · 555 · 0119</span>
+            </div>
+          </div>
+          <div class="spot spot-7">
+            <div>
+              <div class="spot-head">Apex Strength Gym</div>
+              <div class="spot-sub">Personal training · classes</div>
+            </div>
+            <div class="spot-offer"><em>$0</em> enrollment</div>
+            <div class="spot-cta">
+              <span>apexstrengthwny.com</span>
+              <span class="phone">716 · 555 · 0108</span>
+            </div>
+          </div>
+          <div class="spot spot-8">
+            <div>
+              <div class="spot-head">Paws &amp; Claws Vet</div>
+              <div class="spot-sub">Wellness · dental · surgery</div>
+            </div>
+            <div class="spot-offer"><em>$39</em> wellness exam</div>
+            <div class="spot-cta">
+              <span>pawsandclawsvet.com</span>
+              <span class="phone">716 · 555 · 0164</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="front-bottom">
+          <div class="msg"><strong>Keep this card</strong> · 10 neighbors · 1 place</div>
+          <div class="issue">Issue 001 · May 2026</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BACK v2 -->
+    <div class="side">
+      <div class="side-label">Side B · Address side · <span class="tag">2 Premium Hero Spots</span></div>
+      <div class="card back">
+
+        <!-- LEFT: brand strip + 2 hero spots -->
+        <div class="back-left">
+
+          <div class="brand-strip">
+            <div class="brand-left">
+              <div class="mark"></div>
+              <div class="name">Darksteel Mail</div>
+            </div>
+            <div class="issue">
+              Issue <strong>001</strong><br>
+              May 2026
+            </div>
+          </div>
+
+          <!-- Hero spot 1 -->
+          <div class="hero-spot hero-spot-1">
+            <div class="premium-tag">Featured</div>
+            <div class="hero-left">
+              <div>
+                <div class="hero-brand">Meridian Home Roofing</div>
+                <div class="hero-category">Roofing · siding · windows</div>
+                <div class="hero-pitch">
+                  Family-owned since 2004. <strong>Free inspection + $500 off</strong> any full roof replacement this spring.
+                </div>
+              </div>
+              <div class="hero-cta">
+                <span>meridianroofingwny.com</span>
+                <span class="phone">716 · 555 · 0191</span>
+              </div>
+            </div>
+            <div class="hero-right">
+              <div class="offer-big">$500<small>OFF</small></div>
+              <div class="offer-label">Full roof replacement</div>
+            </div>
+          </div>
+
+          <!-- Hero spot 2 -->
+          <div class="hero-spot hero-spot-2">
+            <div class="premium-tag">Featured</div>
+            <div class="hero-left">
+              <div>
+                <div class="hero-brand">Birchwood Kitchens</div>
+                <div class="hero-category">Cabinet · countertop · remodel</div>
+                <div class="hero-pitch">
+                  Kitchen remodels start at <strong>$14,990 turnkey</strong> — design, demo, install, cleanup. 8 weeks.
+                </div>
+              </div>
+              <div class="hero-cta">
+                <span>birchwoodkitchens.com</span>
+                <span class="phone">716 · 555 · 0173</span>
+              </div>
+            </div>
+            <div class="hero-right">
+              <div class="offer-big">8 wk<small>TURNKEY</small></div>
+              <div class="offer-label">Full kitchen remodel</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: USPS zones -->
+        <div class="back-right">
+          <div class="indicia-zone">
+            ECRWSS<br>
+            EDDM<br>
+            U.S. POSTAGE PAID<br>
+            TONAWANDA, NY
+          </div>
+          <div class="return-addr">
+            Darksteel Mail<br>
+            Tonawanda, NY 14150<br>
+            darksteelmail.com
+          </div>
+          <div class="network-promo">
+            <div class="head">Your business<br><em>here next?</em></div>
+            <div class="sub">8 standard spots + 2 featured. One per category. Next drop June.</div>
+            <div class="link">darksteelmail.com →</div>
+          </div>
+          <div class="address-block">
+            **********ECRWSS****<br>
+            Local Postal Customer<br>
+            Tonawanda, NY
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <h3>What changed on the back &amp; why</h3>
+    <p>The back now earns revenue without sacrificing brand identity or USPS compliance. Premium spots are differentiated enough from standard spots to justify 3x the price — not just "a spot on the back."</p>
+
+    <div class="legend-grid">
+      <div class="legend-item">
+        <div class="legend-num">1</div>
+        <div>
+          <h4>Premium tag</h4>
+          <p>Blue "Featured" tag in the corner marks these as higher-tier placements. Signals status to the household and justifies pricing to the advertiser.</p>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num">2</div>
+        <div>
+          <h4>Editorial treatment</h4>
+          <p>Hero spots use italic serif body copy ("family-owned since 2004") instead of the coupon-style offer format. Reads as a story, not a coupon.</p>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num">3</div>
+        <div>
+          <h4>Big offer panel</h4>
+          <p>Right side of each hero spot is a bold offer block — $500 OFF, 8 WK TURNKEY. Visible from across the room. This is the visual hook.</p>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num">4</div>
+        <div>
+          <h4>Network promo preserved</h4>
+          <p>Middle-right still has the "your business here?" recruitment block. Growth flywheel intact — every household still gets shown how to become advertiser #11.</p>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num">5</div>
+        <div>
+          <h4>USPS zones untouched</h4>
+          <p>Indicia, return address, and Postal Customer block all in the exact positions USPS requires. Counter staff accepts on first review. No compliance risk.</p>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num">6</div>
+        <div>
+          <h4>Brand strip carries over</h4>
+          <p>Same logo + issue number treatment as front. Reinforces "this is Darksteel Mail" as a recognizable monthly piece, not a one-off flyer.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing table -->
+    <div class="pricing-table">
+      <h4>Revenue math — zone 1 at founding rates vs zone 3+ at regular rates</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Placement</th>
+            <th>Qty</th>
+            <th class="num">Founding price</th>
+            <th class="num">Regular price</th>
+            <th class="num">Regular subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Standard spot (front)</td>
+            <td>8</td>
+            <td class="num">$297</td>
+            <td class="num">$497</td>
+            <td class="num">$3,976</td>
+          </tr>
+          <tr>
+            <td>Featured spot (back)</td>
+            <td>2</td>
+            <td class="num">$997</td>
+            <td class="num">$1,497</td>
+            <td class="num">$2,994</td>
+          </tr>
+          <tr class="total">
+            <td>Per-drop revenue (mature)</td>
+            <td>10</td>
+            <td class="num">$4,370</td>
+            <td class="num"></td>
+            <td class="num">$6,970</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Darksteel Mail — Live Postcard Demo</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --panel: #141414;
+    --panel-2: #1c1c1c;
+    --border: #262626;
+    --border-hot: #333;
+    --text: #ededed;
+    --text-dim: #8a8a8a;
+    --text-faint: #555;
+    --blue: #00aaff;
+    --blue-glow: rgba(0, 170, 255, 0.35);
+    --red: #ff2244;
+    --orange: #ff8866;
+    --amber: #ffaa00;
+    --teal: #00ccaa;
+    --pink: #ff88ee;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
+  }
+
+  /* ============= TOP BAR ============= */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    background: rgba(10, 10, 10, 0.85);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Anton', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .logo-mark {
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, var(--blue), var(--red));
+    transform: rotate(45deg);
+    position: relative;
+  }
+  .logo-mark::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: var(--bg);
+  }
+  .logo .live-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--blue);
+    color: var(--bg);
+    letter-spacing: 0.15em;
+    margin-left: 0.3rem;
+  }
+
+  .mode-switcher {
+    display: flex;
+    gap: 2px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 2px;
+  }
+  .mode-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.55rem 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mode-btn:hover { color: var(--text); }
+  .mode-btn.active {
+    background: var(--blue);
+    color: var(--bg);
+  }
+
+  .topbar-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .btn {
+    background: transparent;
+    border: 1px solid var(--border-hot);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 0.55rem 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .btn:hover { border-color: var(--text); }
+  .btn-primary {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: var(--bg);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 20px var(--blue-glow);
+    transform: translateY(-1px);
+  }
+
+  /* ============= MAIN LAYOUT ============= */
+  .main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============= FORM PANEL ============= */
+  .form-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    position: sticky;
+    top: 85px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+  }
+  .form-panel h2 {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .form-panel .sub {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+  }
+
+  .field {
+    margin-bottom: 1rem;
+  }
+  .field label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-faint);
+    margin-bottom: 0.4rem;
+  }
+  .field input,
+  .field select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.65rem 0.75rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input:focus,
+  .field select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-glow);
+  }
+  .field input::placeholder { color: var(--text-faint); }
+
+  .color-picker {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .color-chip {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .color-chip:hover { transform: scale(1.1); }
+  .color-chip.active {
+    border-color: var(--text);
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px currentColor;
+  }
+
+  .tier-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 4px;
+  }
+  .tier-option {
+    padding: 0.7rem 0.6rem;
+    text-align: center;
+    cursor: pointer;
+    font-family: 'Manrope', sans-serif;
+    transition: all 0.15s;
+    border-radius: 2px;
+  }
+  .tier-option .tier-name {
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.15rem;
+  }
+  .tier-option .tier-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+  }
+  .tier-option.active {
+    background: var(--blue);
+    color: var(--bg);
+  }
+  .tier-option.active .tier-price { color: rgba(10,10,10,0.7); }
+  .tier-option:not(.active):hover { background: var(--panel-2); }
+
+  .reveal-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(0, 170, 255, 0.1);
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.7rem;
+    margin-top: 1rem;
+  }
+  .reveal-pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--blue);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .cta-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .cta-section .price-display {
+    font-family: 'Anton', sans-serif;
+    font-size: 2.2rem;
+    line-height: 1;
+    color: var(--blue);
+    margin-bottom: 0.2rem;
+  }
+  .cta-section .price-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .cta-section .claim-btn {
+    display: block;
+    width: 100%;
+    background: var(--blue);
+    color: var(--bg);
+    border: none;
+    font-family: 'Anton', sans-serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cta-section .claim-btn:hover {
+    box-shadow: 0 0 24px var(--blue-glow);
+    transform: translateY(-1px);
+  }
+  .cta-section .claim-sub {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    text-align: center;
+    margin-top: 0.6rem;
+  }
+
+  /* ============= PREVIEW AREA ============= */
+  .preview-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .preview-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .side-switcher {
+    display: flex;
+    gap: 2px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 2px;
+  }
+  .side-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 500;
+  }
+  .side-btn:hover { color: var(--text); }
+  .side-btn.active {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .preview-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  /* ============= POSTCARD ============= */
+  .postcard-stage {
+    background: #3a3834;
+    background-image:
+      radial-gradient(circle at 20% 30%, #423f3a 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, #322f2b 0%, transparent 40%);
+    padding: 2.5rem;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .postcard {
+    width: 100%;
+    max-width: 880px;
+    aspect-ratio: 11 / 6.5;
+    border-radius: 3px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.15),
+      0 10px 30px rgba(0,0,0,0.3),
+      0 30px 60px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+    background: #0a0a0a;
+  }
+
+  /* Comparison mode: two postcards side by side */
+  .postcard-stage.comparing {
+    padding: 2rem 1.5rem;
+  }
+  .postcard-stage.comparing .postcard-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    width: 100%;
+    align-items: start;
+  }
+  .postcard-wrap-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #aaa;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .postcard-wrap-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: #777;
+  }
+  .postcard-wrap-label.win {
+    color: var(--blue);
+  }
+  .postcard-wrap-label.win::before {
+    background: var(--blue);
+  }
+  .postcard-stage.comparing .postcard {
+    max-width: 100%;
+  }
+
+  /* ============ FRONT POSTCARD DESIGN ============ */
+  .pc-front {
+    background: #0a0a0a;
+    color: #fff;
+    display: grid;
+    grid-template-rows: 54px 1fr 32px;
+    font-family: 'Manrope', sans-serif;
+    width: 100%;
+    height: 100%;
+  }
+  .pc-top {
+    background: var(--blue);
+    color: #0a0a0a;
+    padding: 0 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .pc-top .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Anton', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .pc-top .brand-mark {
+    width: 20px; height: 20px;
+    background: #0a0a0a;
+    transform: rotate(45deg);
+    position: relative;
+  }
+  .pc-top .brand-mark::before {
+    content: '';
+    position: absolute; inset: 3px;
+    background: var(--blue);
+  }
+  .pc-top .tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-align: right;
+  }
+
+  .pc-spots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2px;
+    background: #1a1a1a;
+    padding: 2px;
+  }
+  .pc-spot {
+    background: #0a0a0a;
+    padding: 0.65rem 0.7rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+    transition: all 0.4s cubic-bezier(.2,.9,.3,1);
+  }
+  .pc-spot.your-spot {
+    box-shadow: inset 0 0 0 2px var(--blue);
+    animation: your-spot-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes your-spot-pulse {
+    0%, 100% { box-shadow: inset 0 0 0 2px var(--blue), 0 0 0 0 rgba(0, 170, 255, 0); }
+    50% { box-shadow: inset 0 0 0 2px var(--blue), 0 0 16px 0 rgba(0, 170, 255, 0.4); }
+  }
+  .pc-spot .spot-head {
+    font-family: 'Anton', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1.05;
+    margin-bottom: 0.2rem;
+  }
+  .pc-spot .spot-sub {
+    font-size: 0.52rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.2rem;
+  }
+  .pc-spot .spot-offer {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    line-height: 1;
+    margin: auto 0;
+  }
+  .pc-spot .spot-offer em { font-style: italic; }
+  .pc-spot .spot-cta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.48rem;
+    color: #fff;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-top: 0.25rem;
+    border-top: 1px solid #2a2a2a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  /* Color themes for spots */
+  .pc-spot[data-color="blue"] .spot-offer { color: var(--blue); }
+  .pc-spot[data-color="blue"] .spot-cta .phone { color: var(--blue); }
+  .pc-spot[data-color="red"] { background: #1a1a1a; }
+  .pc-spot[data-color="red"] .spot-offer { color: var(--red); }
+  .pc-spot[data-color="red"] .spot-cta .phone { color: var(--red); }
+  .pc-spot[data-color="blue-solid"] { background: var(--blue); color: #0a0a0a; }
+  .pc-spot[data-color="blue-solid"] .spot-head { color: #0a0a0a; }
+  .pc-spot[data-color="blue-solid"] .spot-sub { color: rgba(10,10,10,0.55); }
+  .pc-spot[data-color="blue-solid"] .spot-offer { color: #0a0a0a; }
+  .pc-spot[data-color="blue-solid"] .spot-cta { color: #0a0a0a; border-top: 1px solid rgba(10,10,10,0.25); }
+  .pc-spot[data-color="blue-solid"] .spot-cta .phone { color: #0a0a0a; }
+  .pc-spot[data-color="amber"] .spot-offer { color: var(--amber); }
+  .pc-spot[data-color="amber"] .spot-cta .phone { color: var(--amber); }
+  .pc-spot[data-color="teal"] { background: #1a1a1a; }
+  .pc-spot[data-color="teal"] .spot-offer { color: var(--teal); }
+  .pc-spot[data-color="teal"] .spot-cta .phone { color: var(--teal); }
+  .pc-spot[data-color="red-solid"] { background: var(--red); color: #0a0a0a; }
+  .pc-spot[data-color="red-solid"] .spot-head { color: #0a0a0a; }
+  .pc-spot[data-color="red-solid"] .spot-sub { color: rgba(10,10,10,0.55); }
+  .pc-spot[data-color="red-solid"] .spot-offer { color: #0a0a0a; }
+  .pc-spot[data-color="red-solid"] .spot-cta { color: #0a0a0a; border-top: 1px solid rgba(10,10,10,0.25); }
+  .pc-spot[data-color="red-solid"] .spot-cta .phone { color: #0a0a0a; }
+  .pc-spot[data-color="pink"] { background: #1a1a1a; }
+  .pc-spot[data-color="pink"] .spot-offer { color: var(--pink); }
+  .pc-spot[data-color="pink"] .spot-cta .phone { color: var(--pink); }
+  .pc-spot[data-color="orange"] .spot-offer { color: var(--orange); }
+  .pc-spot[data-color="orange"] .spot-cta .phone { color: var(--orange); }
+
+  .pc-bottom {
+    background: #0a0a0a;
+    color: #555;
+    padding: 0 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #2a2a2a;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .pc-bottom .msg { color: #888; }
+  .pc-bottom .msg strong { color: var(--blue); font-weight: 500; }
+
+  /* ============ BACK POSTCARD DESIGN ============ */
+  .pc-back {
+    background: #0a0a0a;
+    color: #fff;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .pc-back::before {
+    content: '';
+    position: absolute;
+    top: 1rem; bottom: 1rem; left: 52%;
+    width: 1px;
+    background: repeating-linear-gradient(180deg, #2a2a2a 0 3px, transparent 3px 6px);
+  }
+  .pc-back-left {
+    padding: 0.75rem 1rem;
+    display: grid;
+    grid-template-rows: 32px 1fr 1fr;
+    gap: 0.45rem;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .pcb-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.45rem;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .pcb-brand .b-left {
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .pcb-brand .mark {
+    width: 18px; height: 18px;
+    background: linear-gradient(135deg, var(--blue), var(--red));
+    transform: rotate(45deg);
+    position: relative;
+  }
+  .pcb-brand .mark::before {
+    content: ''; position: absolute; inset: 3px; background: #0a0a0a;
+  }
+  .pcb-brand .name {
+    font-family: 'Anton', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .pcb-brand .issue {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5rem;
+    color: #666;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: right;
+    line-height: 1.3;
+  }
+  .pcb-brand .issue strong { color: var(--blue); font-weight: 500; }
+
+  .hero-spot {
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    padding: 0.5rem 0.7rem;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0.55rem;
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+    transition: all 0.4s cubic-bezier(.2,.9,.3,1);
+  }
+  .hero-spot.your-spot {
+    box-shadow: inset 0 0 0 2px var(--blue);
+    animation: your-spot-pulse 2.4s ease-in-out infinite;
+  }
+  .hero-spot .premium-tag {
+    position: absolute; top: 0; right: 0;
+    background: var(--blue);
+    color: #0a0a0a;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.48rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .hero-spot.hero-2 .premium-tag { background: var(--orange); }
+  .hero-spot .h-left { display: flex; flex-direction: column; justify-content: space-between; min-width: 0; min-height: 0; overflow: hidden; }
+  .hero-spot .h-brand {
+    font-family: 'Anton', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 0.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hero-spot .h-cat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.48rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hero-spot .h-pitch {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.64rem;
+    color: #ddd;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  .hero-spot .h-pitch strong {
+    color: var(--blue);
+    font-style: normal;
+    font-weight: 500;
+    font-family: 'Anton', sans-serif;
+    letter-spacing: 0.02em;
+  }
+  .hero-spot.hero-2 .h-pitch strong { color: var(--orange); }
+  .hero-spot .h-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #666;
+    padding-top: 0.25rem;
+    border-top: 1px solid #1f1f1f;
+    gap: 0.4rem;
+  }
+  .hero-spot .h-cta .phone {
+    color: var(--blue);
+    font-size: 0.58rem;
+  }
+  .hero-spot.hero-2 .h-cta .phone { color: var(--orange); }
+  .hero-spot .h-right {
+    background: #1a1a1a;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3rem;
+    gap: 0.15rem;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .hero-spot .big-offer {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.4rem;
+    color: var(--blue);
+    line-height: 0.95;
+    text-align: center;
+  }
+  .hero-spot.hero-2 .big-offer { color: var(--orange); }
+  .hero-spot .big-offer small {
+    font-size: 0.7rem;
+    display: block;
+    color: #fff;
+    letter-spacing: 0.05em;
+  }
+  .hero-spot .big-offer-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.46rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    text-align: center;
+  }
+
+  .pc-back-right {
+    padding: 0.75rem 1rem 0.75rem 1.2rem;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 0.4rem;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .indicia {
+    justify-self: end;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.46rem;
+    text-align: center;
+    padding: 0.35rem 0.55rem;
+    border: 1px solid #666;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #bbb;
+    background: #0a0a0a;
+  }
+  .return-addr {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5rem;
+    line-height: 1.5;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .net-promo {
+    align-self: center;
+    padding: 0.5rem 0.7rem;
+    background: #0e1a24;
+    border-left: 2px solid var(--blue);
+  }
+  .net-promo .head {
+    font-family: 'Anton', sans-serif;
+    font-size: 0.75rem;
+    color: #fff;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+    line-height: 1;
+  }
+  .net-promo .head em { color: var(--blue); font-style: italic; }
+  .net-promo .sub {
+    font-size: 0.52rem;
+    color: #aaa;
+    line-height: 1.5;
+    margin-bottom: 0.3rem;
+  }
+  .net-promo .link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5rem;
+    color: var(--blue);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .addr-block {
+    align-self: end;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    line-height: 1.5;
+    text-transform: uppercase;
+    color: #ddd;
+    padding: 0.4rem 0.6rem;
+    border-top: 1px solid #2a2a2a;
+  }
+
+  /* ============ VALPAK MOCKUP ============ */
+  .valpak {
+    background: #d4c7a8;
+    background-image:
+      repeating-linear-gradient(45deg, transparent 0 10px, rgba(0,0,0,0.03) 10px 11px),
+      radial-gradient(circle at 20% 20%, #e0d4b5 0%, #c8baa0 70%);
+    padding: 0.6rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0.4rem;
+    width: 100%;
+    height: 100%;
+  }
+  .vp-coupon {
+    background: #fff;
+    padding: 0.4rem 0.5rem;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px dashed #999;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .vp-coupon .vp-brand {
+    font-weight: 900;
+    font-size: 0.58rem;
+    color: #c00;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .vp-coupon .vp-offer {
+    font-weight: 900;
+    font-size: 0.9rem;
+    color: #000;
+    line-height: 1;
+    margin: 0.2rem 0;
+    text-transform: uppercase;
+  }
+  .vp-coupon .vp-offer em {
+    font-style: normal;
+    color: #c00;
+    font-size: 1.15rem;
+  }
+  .vp-coupon .vp-sub {
+    font-size: 0.42rem;
+    color: #444;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .vp-coupon .vp-foot {
+    font-size: 0.42rem;
+    color: #666;
+    margin-top: 0.2rem;
+    border-top: 1px dashed #ccc;
+    padding-top: 0.2rem;
+  }
+  .vp-coupon.vp-red { background: #fff5e8; }
+  .vp-coupon.vp-yellow { background: #ffffd8; }
+  .vp-coupon.vp-blue .vp-brand { color: #0040a0; }
+  .vp-coupon.vp-blue .vp-offer em { color: #0040a0; }
+  .vp-coupon.vp-green .vp-brand { color: #006020; }
+  .vp-coupon.vp-green .vp-offer em { color: #006020; }
+  .vp-coupon.your-vp {
+    box-shadow: inset 0 0 0 2px var(--blue);
+  }
+
+  .vp-envelope {
+    position: relative;
+  }
+  .vp-envelope::before {
+    content: 'VALPAK';
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    font-size: 0.7rem;
+    color: #c00;
+    z-index: 10;
+    background: #fff;
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  /* ============ FAQ / HOW IT WORKS ============ */
+  .info-section {
+    max-width: 1400px;
+    margin: 3rem auto 0;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  .info-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+  }
+  .info-card .num {
+    font-family: 'Anton', sans-serif;
+    font-size: 2.5rem;
+    color: var(--blue);
+    line-height: 0.8;
+    margin-bottom: 0.5rem;
+  }
+  .info-card h3 {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .info-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  /* ============ VIEW MODE SPECIFIC ============ */
+  body.mode-selfserve .form-panel h2::before {
+    content: 'See your business in the May drop';
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 0.4rem;
+    font-weight: 400;
+  }
+  body.mode-walkin .main { grid-template-columns: 1fr; }
+  body.mode-walkin .form-panel { position: static; max-height: none; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1024px) {
+    .main { grid-template-columns: 1fr; }
+    .form-panel { position: static; max-height: none; }
+    .postcard-stage.comparing .postcard-wrap { grid-template-columns: 1fr; gap: 2rem; }
+  }
+  @media (max-width: 640px) {
+    .topbar-inner { flex-wrap: wrap; gap: 0.6rem; }
+    .mode-switcher { font-size: 0.55rem; }
+    .mode-btn { padding: 0.45rem 0.6rem; font-size: 0.55rem; }
+    .main { padding: 1rem; }
+    .postcard-stage { padding: 1rem; }
+    .pc-top .tagline { display: none; }
+  }
+
+  /* ============ HIDDEN STATE ============ */
+  .hide-back .pc-front { display: grid; }
+  .hide-back .pc-back { display: none; }
+  .show-back .pc-front { display: none; }
+  .show-back .pc-back { display: grid; }
+  .comparing-back .pc-back { display: grid !important; }
+  .comparing-back .pc-front { display: none !important; }
+</style>
+</head>
+<body class="mode-sales hide-back">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="logo">
+      <div class="logo-mark"></div>
+      <span>Darksteel Mail</span>
+      <span class="live-tag">Live Demo</span>
+    </div>
+
+    <div class="mode-switcher" id="mode-switcher">
+      <button class="mode-btn active" data-mode="sales">Sales Demo</button>
+      <button class="mode-btn" data-mode="selfserve">Self-Serve</button>
+      <button class="mode-btn" data-mode="walkin">Walk-in QR</button>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn" id="btn-compare">vs Valpak</button>
+      <button class="btn" id="btn-download">Download PNG</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- FORM PANEL -->
+  <div class="form-panel">
+    <h2>Your business on the postcard</h2>
+    <p class="sub">Fill in the fields — postcard updates live. This is exactly what your ad looks like in the May drop.</p>
+
+    <div class="field">
+      <label>Business name</label>
+      <input type="text" id="f-name" placeholder="e.g. Laurel Dental Co." value="Laurel Dental Co." autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label>Category</label>
+      <select id="f-category">
+        <option value="dental">Dental</option>
+        <option value="hvac">HVAC</option>
+        <option value="medspa">Med Spa</option>
+        <option value="auto">Auto Repair</option>
+        <option value="roofing">Roofing</option>
+        <option value="pizza">Pizza / Restaurant</option>
+        <option value="gym">Gym / Fitness</option>
+        <option value="vet">Veterinary</option>
+        <option value="salon">Salon / Barber</option>
+        <option value="landscaping">Landscaping</option>
+        <option value="realestate">Real Estate</option>
+        <option value="insurance">Insurance</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Your offer</label>
+      <input type="text" id="f-offer" placeholder="e.g. $79 new-patient exam" value="$79 new-patient exam" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label>Service description</label>
+      <input type="text" id="f-sub" placeholder="e.g. Cosmetic · family · implants" value="Cosmetic · family · implants" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label>Phone number</label>
+      <input type="text" id="f-phone" placeholder="716 · 555 · 0187" value="716 · 555 · 0187" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label>Website</label>
+      <input type="text" id="f-url" placeholder="laureldental.com" value="laureldental.com" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label>Accent color</label>
+      <div class="color-picker" id="color-picker">
+        <div class="color-chip active" data-color="blue" style="background: #00aaff; color: #00aaff;"></div>
+        <div class="color-chip" data-color="red" style="background: #ff2244; color: #ff2244;"></div>
+        <div class="color-chip" data-color="amber" style="background: #ffaa00; color: #ffaa00;"></div>
+        <div class="color-chip" data-color="teal" style="background: #00ccaa; color: #00ccaa;"></div>
+        <div class="color-chip" data-color="pink" style="background: #ff88ee; color: #ff88ee;"></div>
+        <div class="color-chip" data-color="orange" style="background: #ff8866; color: #ff8866;"></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Spot tier</label>
+      <div class="tier-toggle" id="tier-toggle">
+        <div class="tier-option active" data-tier="standard">
+          <div class="tier-name">Standard</div>
+          <div class="tier-price">$297 founding</div>
+        </div>
+        <div class="tier-option" data-tier="featured">
+          <div class="tier-name">Featured</div>
+          <div class="tier-price">$997 founding</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal-pill" id="exclusivity-pill">
+      No <span id="excl-cat">dental</span> competitors on this drop
+    </div>
+
+    <div class="cta-section">
+      <div class="price-display" id="price-display">$297</div>
+      <div class="price-label">Your founding rate · May drop · 5,000 homes</div>
+      <button class="claim-btn" id="btn-claim">Lock in this spot →</button>
+      <div class="claim-sub">One business per category · Guaranteed exclusivity</div>
+    </div>
+  </div>
+
+  <!-- PREVIEW AREA -->
+  <div class="preview-area">
+    <div class="preview-controls">
+      <div class="side-switcher" id="side-switcher">
+        <button class="side-btn active" data-side="front">Front (8 standard)</button>
+        <button class="side-btn" data-side="back">Back (brand + 2 featured)</button>
+      </div>
+
+      <div class="preview-actions">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase;">
+          6.5" × 11" jumbo
+        </div>
+      </div>
+    </div>
+
+    <div class="postcard-stage" id="postcard-stage">
+      <div class="postcard-wrap">
+        <!-- Darksteel postcard -->
+        <div>
+          <div class="postcard-wrap-label win" id="pc-label-dark" style="display:none;">Darksteel Mail · clean · 8 businesses</div>
+          <div class="postcard" id="postcard-main">
+            <!-- FRONT -->
+            <div class="pc-front">
+              <div class="pc-top">
+                <div class="brand">
+                  <div class="brand-mark"></div>
+                  <span>Darksteel Mail</span>
+                </div>
+                <div class="tagline">Eight local businesses · One mailbox · May 2026</div>
+              </div>
+              <div class="pc-spots" id="pc-spots-container">
+                <!-- spots injected via JS -->
+              </div>
+              <div class="pc-bottom">
+                <div class="msg"><strong>Keep this card</strong> · 10 neighbors · 1 place</div>
+                <div>Issue 001</div>
+              </div>
+            </div>
+
+            <!-- BACK -->
+            <div class="pc-back">
+              <div class="pc-back-left">
+                <div class="pcb-brand">
+                  <div class="b-left">
+                    <div class="mark"></div>
+                    <div class="name">Darksteel Mail</div>
+                  </div>
+                  <div class="issue">Issue <strong>001</strong><br>May 2026</div>
+                </div>
+                <div class="hero-spot" id="hero-spot-1">
+                  <div class="premium-tag">Featured</div>
+                  <div class="h-left">
+                    <div>
+                      <div class="h-brand" id="hero1-brand">Meridian Home Roofing</div>
+                      <div class="h-cat" id="hero1-cat">Roofing · siding · windows</div>
+                      <div class="h-pitch" id="hero1-pitch">Family-owned since 2004. <strong>Free inspection + $500 off</strong> any full roof replacement this spring.</div>
+                    </div>
+                    <div class="h-cta">
+                      <span id="hero1-url">meridianroofingwny.com</span>
+                      <span class="phone" id="hero1-phone">716 · 555 · 0191</span>
+                    </div>
+                  </div>
+                  <div class="h-right">
+                    <div class="big-offer" id="hero1-big">$500<small>OFF</small></div>
+                    <div class="big-offer-label" id="hero1-label">Full roof replacement</div>
+                  </div>
+                </div>
+                <div class="hero-spot hero-2" id="hero-spot-2">
+                  <div class="premium-tag">Featured</div>
+                  <div class="h-left">
+                    <div>
+                      <div class="h-brand" id="hero2-brand">Birchwood Kitchens</div>
+                      <div class="h-cat" id="hero2-cat">Cabinet · countertop · remodel</div>
+                      <div class="h-pitch" id="hero2-pitch">Kitchen remodels start at <strong>$14,990 turnkey</strong> — design, demo, install, cleanup. 8 weeks.</div>
+                    </div>
+                    <div class="h-cta">
+                      <span id="hero2-url">birchwoodkitchens.com</span>
+                      <span class="phone" id="hero2-phone">716 · 555 · 0173</span>
+                    </div>
+                  </div>
+                  <div class="h-right">
+                    <div class="big-offer" id="hero2-big">8 wk<small>TURNKEY</small></div>
+                    <div class="big-offer-label" id="hero2-label">Full kitchen remodel</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pc-back-right">
+                <div class="indicia">
+                  ECRWSS<br>EDDM<br>U.S. POSTAGE PAID<br>TONAWANDA, NY
+                </div>
+                <div class="return-addr">
+                  Darksteel Mail<br>Tonawanda, NY 14150<br>darksteelmail.com
+                </div>
+                <div class="net-promo">
+                  <div class="head">Your business<br><em>here next?</em></div>
+                  <div class="sub">8 standard spots + 2 featured. One per category.</div>
+                  <div class="link">darksteelmail.com →</div>
+                </div>
+                <div class="addr-block">
+                  **********ECRWSS****<br>Local Postal Customer<br>Tonawanda, NY
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Valpak comparison -->
+        <div id="valpak-wrap" style="display:none;">
+          <div class="postcard-wrap-label">Typical shared-mail envelope · cluttered · 20+ coupons</div>
+          <div class="postcard">
+            <div class="valpak vp-envelope" id="valpak-container">
+              <!-- coupons injected via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INFO SECTION -->
+<div class="info-section">
+  <div class="info-card">
+    <div class="num">5,000</div>
+    <h3>Homes per drop</h3>
+    <p>Every mailbox in a defined zone. EDDM-compliant saturation mail, dropped once per month per zone.</p>
+  </div>
+  <div class="info-card">
+    <div class="num">8+2</div>
+    <h3>Businesses total</h3>
+    <p>8 standard spots, 2 featured hero spots on the back. Maximum 10 advertisers — one per category, guaranteed.</p>
+  </div>
+  <div class="info-card">
+    <div class="num">4¢</div>
+    <h3>Per household</h3>
+    <p>Your share of reaching every home in the zone works out to 4-6 cents per household. Roughly half of what Valpak charges, cleaner design.</p>
+  </div>
+  <div class="info-card">
+    <div class="num">30</div>
+    <h3>Days to drop</h3>
+    <p>Claim your spot today, postcard mails in 30 days. Calls start the week it lands.</p>
+  </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+
+const CATEGORIES = {
+  dental: { name: 'Dental', default_offer: '$79 new-patient exam', default_sub: 'Cosmetic · family · implants', group: 'dental' },
+  hvac: { name: 'HVAC', default_offer: '$49 tune-up', default_sub: 'Heating · cooling · service', group: 'hvac' },
+  medspa: { name: 'Med Spa', default_offer: '$9/unit Botox', default_sub: 'Botox · filler · laser', group: 'beauty' },
+  auto: { name: 'Auto Repair', default_offer: '$29 oil change', default_sub: 'Repair · diagnostics · tires', group: 'auto' },
+  roofing: { name: 'Roofing', default_offer: 'Free inspection', default_sub: 'Roofing · siding · gutters', group: 'home_exterior' },
+  pizza: { name: 'Pizza / Restaurant', default_offer: 'Large pie $12.99', default_sub: 'Brick-oven · wings · catering', group: 'food' },
+  gym: { name: 'Gym / Fitness', default_offer: '$0 enrollment', default_sub: 'Personal training · classes', group: 'fitness' },
+  vet: { name: 'Veterinary', default_offer: '$39 wellness exam', default_sub: 'Wellness · dental · surgery', group: 'pets' },
+  salon: { name: 'Salon / Barber', default_offer: '20% off first visit', default_sub: 'Cut · color · style', group: 'beauty' },
+  landscaping: { name: 'Landscaping', default_offer: '15% off first service', default_sub: 'Mowing · landscaping · cleanups', group: 'home_services' },
+  realestate: { name: 'Real Estate', default_offer: 'Free home valuation', default_sub: 'Residential · commercial · rentals', group: 'professional' },
+  insurance: { name: 'Insurance', default_offer: 'Free quote · save 20%', default_sub: 'Auto · home · life · business', group: 'professional' },
+};
+
+// The 7 other businesses that fill the front alongside the prospect
+// Covers most common combos; the prospect's category replaces the matching slot
+const OTHER_SPOTS = [
+  { cat: 'hvac', name: 'Ironside HVAC', offer: '$49 tune-up', sub: 'Heating · cooling · service', url: 'ironsidehvac.com', phone: '716 · 555 · 0142', color: 'blue' },
+  { cat: 'dental', name: 'Laurel Dental Co.', offer: '$79 new-patient exam', sub: 'Cosmetic · family · implants', url: 'laureldental.com', phone: '716 · 555 · 0187', color: 'red' },
+  { cat: 'medspa', name: 'Radiance Med Spa', offer: '$9/unit Botox', sub: 'Botox · filler · laser', url: 'radianceaesthetics.com', phone: '716 · 555 · 0124', color: 'blue-solid' },
+  { cat: 'auto', name: 'North Main Auto', offer: '$29 oil change', sub: 'Repair · diagnostics · tires', url: 'northmainauto.com', phone: '716 · 555 · 0156', color: 'amber' },
+  { cat: 'landscaping', name: 'Green Thumb Lawn', offer: '15% off first service', sub: 'Mowing · landscaping · cleanups', url: 'greenthumbwny.com', phone: '716 · 555 · 0173', color: 'teal' },
+  { cat: 'pizza', name: 'Koa Pizza & Subs', offer: 'Large pie $12.99', sub: 'Brick-oven · wings · catering', url: 'koapizza.com', phone: '716 · 555 · 0119', color: 'red-solid' },
+  { cat: 'gym', name: 'Apex Strength Gym', offer: '$0 enrollment', sub: 'Personal training · classes', url: 'apexstrengthwny.com', phone: '716 · 555 · 0108', color: 'blue' },
+  { cat: 'vet', name: 'Paws & Claws Vet', offer: '$39 wellness exam', sub: 'Wellness · dental · surgery', url: 'pawsandclawsvet.com', phone: '716 · 555 · 0164', color: 'pink' },
+];
+
+// Valpak-style coupons for comparison
+const VALPAK_COUPONS = [
+  { brand: 'Discount Dental', offer: '$99', sub: 'New-patient exam + X-rays', foot: 'Expires 06/30', cls: '' },
+  { brand: "Mike's Pizza", offer: '$5 OFF', sub: 'Any large specialty pizza', foot: 'One per visit', cls: 'vp-red' },
+  { brand: 'Best Auto Service', offer: '$19.99', sub: 'Oil change + tire rotation', foot: 'Valid at all locations', cls: 'vp-yellow' },
+  { brand: 'Oak Tree HVAC', offer: '$50 OFF', sub: 'Any service call over $200', foot: 'Licensed & insured', cls: 'vp-blue' },
+  { brand: 'Glamour Nails', offer: '20% OFF', sub: 'First-time manicure special', foot: 'New clients only', cls: '' },
+  { brand: 'QuickLube Express', offer: '$14.99', sub: 'Synthetic blend oil change', foot: 'No appointment', cls: 'vp-green' },
+  { brand: 'Sparkle Carpet', offer: '$99', sub: '3 rooms professionally cleaned', foot: 'Min. 100 sq ft each', cls: 'vp-red' },
+  { brand: 'Dr. Smile Ortho', offer: '$500 OFF', sub: 'Full braces treatment plan', foot: 'Consult required', cls: 'vp-blue' },
+  { brand: 'Cozy Pizza', offer: 'BOGO', sub: 'Buy one large, get one free', foot: 'Tuesdays only', cls: 'vp-yellow' },
+];
+
+// ==================== STATE ====================
+
+const state = {
+  name: 'Laurel Dental Co.',
+  category: 'dental',
+  offer: '$79 new-patient exam',
+  sub: 'Cosmetic · family · implants',
+  phone: '716 · 555 · 0187',
+  url: 'laureldental.com',
+  color: 'blue',
+  tier: 'standard',
+  side: 'front',
+  comparing: false,
+  mode: 'sales',
+};
+
+// ==================== RENDERING ====================
+
+function renderFrontSpots() {
+  const container = document.getElementById('pc-spots-container');
+  container.innerHTML = '';
+
+  const userCat = state.category;
+  const userGroup = CATEGORIES[userCat].group;
+
+  // Select 7 other businesses whose categories don't conflict with user's
+  const otherPool = OTHER_SPOTS.filter(s => {
+    const sGroup = CATEGORIES[s.cat] ? CATEGORIES[s.cat].group : null;
+    return sGroup !== userGroup;
+  });
+
+  // Take 7 from pool
+  const others = otherPool.slice(0, 7);
+
+  // Build 8 spots: user spot + 7 others
+  const allSpots = [
+    {
+      name: state.name,
+      offer: state.offer,
+      sub: state.sub,
+      url: state.url,
+      phone: state.phone,
+      color: state.color,
+      isUser: true,
+    },
+    ...others.map(o => ({ ...o, isUser: false })),
+  ];
+
+  // If tier is featured, user's spot moves to back (shown separately).
+  // On front, we show the 8 others (or fill with one more).
+  const spotsToShow = state.tier === 'featured'
+    ? otherPool.slice(0, 8)
+    : allSpots;
+
+  spotsToShow.forEach((spot, i) => {
+    const el = document.createElement('div');
+    el.className = 'pc-spot' + (spot.isUser ? ' your-spot' : '');
+    el.dataset.color = spot.color;
+    el.innerHTML = `
+      <div>
+        <div class="spot-head">${spot.name}</div>
+        <div class="spot-sub">${spot.sub}</div>
+      </div>
+      <div class="spot-offer"><em>${spot.offer.split(' ')[0]}</em> ${spot.offer.split(' ').slice(1).join(' ')}</div>
+      <div class="spot-cta">
+        <span>${spot.url}</span>
+        <span class="phone">${spot.phone.split(' · ').slice(-1)[0].slice(-4)}</span>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+function renderBack() {
+  // If tier = featured, replace hero-spot-1 with user's data
+  if (state.tier === 'featured') {
+    const h1 = document.getElementById('hero-spot-1');
+    h1.classList.add('your-spot');
+
+    document.getElementById('hero1-brand').textContent = state.name;
+    document.getElementById('hero1-cat').textContent = state.sub;
+    document.getElementById('hero1-pitch').innerHTML = `Your business. <strong>${state.offer}</strong> in this issue — see it standing out on the back of 5,000 postcards.`;
+    document.getElementById('hero1-url').textContent = state.url;
+    document.getElementById('hero1-phone').textContent = state.phone;
+
+    // Parse offer into big block
+    const match = state.offer.match(/(\$[\d,]+|\d+%|\w+)/);
+    const big = match ? match[0] : 'YOUR';
+    const rest = state.offer.replace(big, '').trim() || 'offer';
+    document.getElementById('hero1-big').innerHTML = `${big}<small>${rest.split(' ').slice(0,1).join(' ').toUpperCase() || 'OFFER'}</small>`;
+    document.getElementById('hero1-label').textContent = state.sub;
+  } else {
+    // Reset to default
+    const h1 = document.getElementById('hero-spot-1');
+    h1.classList.remove('your-spot');
+    document.getElementById('hero1-brand').textContent = 'Meridian Home Roofing';
+    document.getElementById('hero1-cat').textContent = 'Roofing · siding · windows';
+    document.getElementById('hero1-pitch').innerHTML = 'Family-owned since 2004. <strong>Free inspection + $500 off</strong> any full roof replacement this spring.';
+    document.getElementById('hero1-url').textContent = 'meridianroofingwny.com';
+    document.getElementById('hero1-phone').textContent = '716 · 555 · 0191';
+    document.getElementById('hero1-big').innerHTML = '$500<small>OFF</small>';
+    document.getElementById('hero1-label').textContent = 'Full roof replacement';
+  }
+}
+
+function renderValpak() {
+  const container = document.getElementById('valpak-container');
+  container.innerHTML = '';
+  VALPAK_COUPONS.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'vp-coupon ' + (c.cls || '');
+    if (i === 0 && state.comparing) el.classList.add('your-vp');
+    el.innerHTML = `
+      <div class="vp-brand">${c.brand}</div>
+      <div class="vp-offer"><em>${c.offer}</em></div>
+      <div class="vp-sub">${c.sub}</div>
+      <div class="vp-foot">${c.foot}</div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+function updatePrice() {
+  const price = state.tier === 'featured' ? 997 : 297;
+  document.getElementById('price-display').textContent = '$' + price.toLocaleString();
+}
+
+function updateExclusivity() {
+  const pill = document.getElementById('exclusivity-pill');
+  const cat = CATEGORIES[state.category];
+  document.getElementById('excl-cat').textContent = cat.name.toLowerCase();
+}
+
+function render() {
+  renderFrontSpots();
+  renderBack();
+  renderValpak();
+  updatePrice();
+  updateExclusivity();
+}
+
+// ==================== EVENT HANDLERS ====================
+
+function readState() {
+  state.name = document.getElementById('f-name').value || 'Your Business';
+  state.category = document.getElementById('f-category').value;
+  state.offer = document.getElementById('f-offer').value || 'Your offer';
+  state.sub = document.getElementById('f-sub').value || 'Your services';
+  state.phone = document.getElementById('f-phone').value || '716 · 555 · 0000';
+  state.url = document.getElementById('f-url').value || 'yoursite.com';
+}
+
+['f-name', 'f-category', 'f-offer', 'f-sub', 'f-phone', 'f-url'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    readState();
+    render();
+  });
+});
+
+document.getElementById('f-category').addEventListener('change', () => {
+  const cat = CATEGORIES[document.getElementById('f-category').value];
+  if (cat) {
+    document.getElementById('f-offer').value = cat.default_offer;
+    document.getElementById('f-sub').value = cat.default_sub;
+    readState();
+    render();
+  }
+});
+
+document.querySelectorAll('.color-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.color-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    state.color = chip.dataset.color;
+    render();
+  });
+});
+
+document.querySelectorAll('.tier-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.tier-option').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    state.tier = opt.dataset.tier;
+    // Auto-switch to back when featured tier selected
+    if (state.tier === 'featured') {
+      switchSide('back');
+    } else {
+      switchSide('front');
+    }
+    render();
+  });
+});
+
+function switchSide(side) {
+  state.side = side;
+  document.querySelectorAll('.side-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.side === side);
+  });
+  document.body.classList.toggle('hide-back', side === 'front');
+  document.body.classList.toggle('show-back', side === 'back');
+}
+
+document.querySelectorAll('.side-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchSide(btn.dataset.side));
+});
+
+document.getElementById('btn-compare').addEventListener('click', () => {
+  state.comparing = !state.comparing;
+  const stage = document.getElementById('postcard-stage');
+  const vpWrap = document.getElementById('valpak-wrap');
+  const dsLabel = document.getElementById('pc-label-dark');
+  const btn = document.getElementById('btn-compare');
+
+  if (state.comparing) {
+    stage.classList.add('comparing');
+    vpWrap.style.display = 'block';
+    dsLabel.style.display = 'flex';
+    btn.textContent = '× Exit Compare';
+  } else {
+    stage.classList.remove('comparing');
+    vpWrap.style.display = 'none';
+    dsLabel.style.display = 'none';
+    btn.textContent = 'vs Valpak';
+  }
+  render();
+});
+
+document.getElementById('btn-download').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-download');
+  btn.textContent = 'Rendering...';
+  try {
+    const target = document.querySelector('.postcard-stage');
+    const canvas = await html2canvas(target, {
+      backgroundColor: '#3a3834',
+      scale: 2,
+      logging: false,
+    });
+    const link = document.createElement('a');
+    link.download = `darksteel-mail-${state.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.textContent = 'Downloaded ✓';
+    setTimeout(() => btn.textContent = 'Download PNG', 2000);
+  } catch (e) {
+    console.error(e);
+    btn.textContent = 'Failed — try again';
+    setTimeout(() => btn.textContent = 'Download PNG', 2000);
+  }
+});
+
+document.getElementById('btn-claim').addEventListener('click', () => {
+  alert('In production: this would open a Stripe Checkout for $' + (state.tier === 'featured' ? '997' : '297') + ' and lock your spot on the May drop immediately.\n\nFor the demo, this is where the actual purchase flow connects.');
+});
+
+// Mode switcher
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    document.body.classList.remove('mode-sales', 'mode-selfserve', 'mode-walkin');
+    document.body.classList.add('mode-' + mode);
+    state.mode = mode;
+  });
+});
+
+// URL params for pre-population (walk-in QR mode)
+const params = new URLSearchParams(window.location.search);
+if (params.get('mode')) {
+  const modeBtn = document.querySelector(`.mode-btn[data-mode="${params.get('mode')}"]`);
+  if (modeBtn) modeBtn.click();
+}
+if (params.get('cat')) {
+  const select = document.getElementById('f-category');
+  if ([...select.options].some(o => o.value === params.get('cat'))) {
+    select.value = params.get('cat');
+    select.dispatchEvent(new Event('change'));
+  }
+}
+if (params.get('name')) {
+  document.getElementById('f-name').value = params.get('name');
+  readState();
+  render();
+}
+
+// Initial render
+render();
+</script>
+</body>
+</html>
