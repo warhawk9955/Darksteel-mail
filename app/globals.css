@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================================================
+   Brand tokens — source of truth is design-reference/brand-tokens.md.
+   Change here only if the tokens doc changes.
+   ===================================================================== */
+:root {
+  --bg: #0a0a0a;
+  --panel: #141414;
+  --panel-2: #1c1c1c;
+  --border: #262626;
+  --border-hot: #333333;
+
+  --text: #ededed;
+  --text-dim: #8a8a8a;
+  --text-faint: #555555;
+
+  --blue: #00aaff;
+  --blue-glow: rgba(0, 170, 255, 0.35);
+  --red: #ff2244;
+  --orange: #ff8866;
+  --amber: #ffaa00;
+  --teal: #00ccaa;
+  --pink: #ff88ee;
+
+  /* Font-family CSS vars are injected by next/font in layout.tsx. */
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+}
+
+/* Signature grid background — per brand-tokens.md */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    black 40%,
+    transparent 90%
+  );
+}
+
+/* Everything the user renders sits above the grid. */
+#__next,
+main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Headlines: Anton is always uppercase per brand-tokens.md */
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-display), Impact, sans-serif;
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+/* Pulsing dot used on live/active indicators */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
