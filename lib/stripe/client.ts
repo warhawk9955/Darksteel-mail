@@ -1,6 +1,6 @@
 import "server-only";
 import Stripe from "stripe";
-import { requireStripe } from "@/lib/env";
+import { requireStripeSecret } from "@/lib/env";
 
 let cached: Stripe | null = null;
 
@@ -13,7 +13,7 @@ let cached: Stripe | null = null;
  */
 export function stripe(): Stripe {
   if (cached) return cached;
-  const { secretKey } = requireStripe();
+  const { secretKey } = requireStripeSecret();
   cached = new Stripe(secretKey, { typescript: true });
   return cached;
 }

@@ -73,19 +73,22 @@ export const env = {
   },
 } as const;
 
-export function requireStripe(): { secretKey: string; webhookSecret: string } {
+/** Needed by the checkout endpoint (creates Stripe sessions). */
+export function requireStripeSecret(): { secretKey: string } {
   if (!env.stripe.secretKey) {
     throw new Error(
       `STRIPE_SECRET_KEY_${env.stripe.mode.toUpperCase()} is not set`,
     );
   }
+  return { secretKey: env.stripe.secretKey };
+}
+
+/** Needed by the webhook endpoint (verifies signatures). */
+export function requireStripeWebhook(): { webhookSecret: string } {
   if (!env.stripe.webhookSecret) {
     throw new Error(
       `STRIPE_WEBHOOK_SECRET_${env.stripe.mode.toUpperCase()} is not set`,
     );
   }
-  return {
-    secretKey: env.stripe.secretKey,
-    webhookSecret: env.stripe.webhookSecret,
-  };
+  return { webhookSecret: env.stripe.webhookSecret };
 }
