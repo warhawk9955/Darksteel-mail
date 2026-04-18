@@ -3,9 +3,10 @@ import Link from "next/link";
 import { anonClient } from "@/lib/supabase/anon";
 import { getZoneBySlug } from "@/lib/db/zones";
 import { getSpotsByZone } from "@/lib/db/spots";
+import { getCategoriesWithGroups } from "@/lib/db/categories";
 import { computePrice, soldFraction } from "@/lib/pricing";
 import PostcardPreview from "./PostcardPreview";
-import SpotAvailabilityRow from "./SpotAvailabilityRow";
+import SpotGrid from "./SpotGrid";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -21,12 +22,26 @@ export default async function ZonePage({ params }: PageProps) {
   const zone = await getZoneBySlug(client, slug);
   if (!zone) notFound();
 
-  const spots = await getSpotsByZone(client, zone.id);
+  const [spots, categories] = await Promise.all([
+    getSpotsByZone(client, zone.id),
+    getCategoriesWithGroups(client),
+  ]);
   if (spots.length === 0) notFound();
 
   const fraction = soldFraction(spots);
   const availableCount = spots.filter((s) => s.status === "available").length;
   const standardPrice = computePrice(zone, "standard", fraction);
+
+  // Groups that are already locked for this drop — any spot that is
+  // pending or sold reserves its group. Used by the claim modal to
+  // disable matching category options.
+  const takenGroupIds = Array.from(
+    new Set(
+      spots
+        .filter((s) => s.status !== "available" && s.group_id)
+        .map((s) => s.group_id as string),
+    ),
+  );
 
   const dropDate = new Date(zone.drop_date);
   const dropDateLabel = dropDate.toLocaleDateString("en-US", {
@@ -102,8 +117,10 @@ export default async function ZonePage({ params }: PageProps) {
         <div className="font-mono text-[0.7rem] tracking-[0.2em] uppercase text-text-dim mb-4">
           Live Availability
         </div>
-        <SpotAvailabilityRow
+        <SpotGrid
           spots={spots}
+          categories={categories}
+          takenGroupIds={takenGroupIds}
           standardFoundingCents={zone.standard_founding_cents}
           standardRegularCents={zone.standard_regular_cents}
           featuredFoundingCents={zone.featured_founding_cents}
