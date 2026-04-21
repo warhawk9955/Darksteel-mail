@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:reset": "supabase db reset --local",
+    "db:types": "supabase gen types typescript --local --schema public > lib/supabase/types.ts",
+    "stripe:verify": "node scripts/verify-stripe.mjs",
+    "stripe:listen": "stripe listen --project-name default --forward-to http://localhost:3000/api/webhooks/stripe"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.3",
