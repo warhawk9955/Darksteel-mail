@@ -24,6 +24,15 @@ const config: Config = {
         amber: "var(--amber)",
         teal: "var(--teal)",
         pink: "var(--pink)",
+
+        "theme-surface": "var(--theme-surface)",
+        "theme-surface-2": "var(--theme-surface-2)",
+        "theme-on-surface": "var(--theme-on-surface)",
+        "theme-on-surface-dim": "var(--theme-on-surface-dim)",
+        "theme-primary": "var(--theme-primary)",
+        "theme-primary-on": "var(--theme-primary-on)",
+        "theme-accent": "var(--theme-accent)",
+        "theme-border": "var(--theme-border)",
       },
       boxShadow: {
         "blue-glow": "0 0 24px var(--blue-glow)",

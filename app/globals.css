@@ -25,7 +25,127 @@
   --teal: #00ccaa;
   --pink: #ff88ee;
 
+  /* Theme tokens — overridden per palette via [data-palette="..."].
+     Defaults match the Midnight palette so the admin chrome and the
+     site_config-less placeholder both render correctly. */
+  --theme-surface: #0a0a0a;
+  --theme-surface-2: #141414;
+  --theme-on-surface: #ededed;
+  --theme-on-surface-dim: #8a8a8a;
+  --theme-primary: #00aaff;
+  --theme-primary-on: #0a0a0a;
+  --theme-accent: #ff2244;
+  --theme-border: #262626;
+
   /* Font-family CSS vars are injected by next/font in layout.tsx. */
+}
+
+/* ---------- Palettes -------------------------------------------------
+   Minimal four-token override per palette: surface, primary, on-surface,
+   border. The admin chrome continues to use --bg / --panel etc., so
+   palette switching only repaints the public site. */
+
+[data-palette="midnight"] {
+  --theme-surface: #0a0a0a; --theme-surface-2: #141414;
+  --theme-on-surface: #ededed; --theme-on-surface-dim: #8a8a8a;
+  --theme-primary: #00aaff; --theme-primary-on: #0a0a0a;
+  --theme-accent: #ff2244; --theme-border: #262626;
+}
+[data-palette="ocean"] {
+  --theme-surface: #f4f1de; --theme-surface-2: #ffffff;
+  --theme-on-surface: #0d3b66; --theme-on-surface-dim: #4a6b8a;
+  --theme-primary: #1d8be3; --theme-primary-on: #ffffff;
+  --theme-accent: #0d3b66; --theme-border: #d8d2bd;
+}
+[data-palette="emerald"] {
+  --theme-surface: #f1ede0; --theme-surface-2: #ffffff;
+  --theme-on-surface: #0e3b2e; --theme-on-surface-dim: #4a6b58;
+  --theme-primary: #1fb573; --theme-primary-on: #ffffff;
+  --theme-accent: #0e3b2e; --theme-border: #d4cdb3;
+}
+[data-palette="sunset"] {
+  --theme-surface: #fff1e0; --theme-surface-2: #ffffff;
+  --theme-on-surface: #3d2010; --theme-on-surface-dim: #7a4b30;
+  --theme-primary: #ff7e3b; --theme-primary-on: #ffffff;
+  --theme-accent: #7a2d12; --theme-border: #e8d4b8;
+}
+[data-palette="classic"] {
+  --theme-surface: #ffffff; --theme-surface-2: #f5f1e8;
+  --theme-on-surface: #0d2547; --theme-on-surface-dim: #4a6b8a;
+  --theme-primary: #d4a017; --theme-primary-on: #0d2547;
+  --theme-accent: #0d2547; --theme-border: #e2e2e2;
+}
+[data-palette="forest"] {
+  --theme-surface: #f1ede0; --theme-surface-2: #ffffff;
+  --theme-on-surface: #1c3322; --theme-on-surface-dim: #4a6b4a;
+  --theme-primary: #5fb236; --theme-primary-on: #ffffff;
+  --theme-accent: #1c3322; --theme-border: #d4cdb3;
+}
+[data-palette="berry"] {
+  --theme-surface: #ffeef2; --theme-surface-2: #ffffff;
+  --theme-on-surface: #2a1a20; --theme-on-surface-dim: #6b4a55;
+  --theme-primary: #e63a5f; --theme-primary-on: #ffffff;
+  --theme-accent: #5b1a2e; --theme-border: #f0d4dd;
+}
+[data-palette="slate"] {
+  --theme-surface: #ffffff; --theme-surface-2: #f4f5f8;
+  --theme-on-surface: #252a35; --theme-on-surface-dim: #6b7280;
+  --theme-primary: #5d70ff; --theme-primary-on: #ffffff;
+  --theme-accent: #3a4252; --theme-border: #e2e4ea;
+}
+[data-palette="rust"] {
+  --theme-surface: #fff1e0; --theme-surface-2: #ffffff;
+  --theme-on-surface: #3d1f10; --theme-on-surface-dim: #7a4b30;
+  --theme-primary: #e96c34; --theme-primary-on: #ffffff;
+  --theme-accent: #7a3017; --theme-border: #e8d4b8;
+}
+[data-palette="glass"] {
+  --theme-surface: #e8f4fa; --theme-surface-2: #ffffff;
+  --theme-on-surface: #0a1a2a; --theme-on-surface-dim: #4a6b7a;
+  --theme-primary: #33d6f5; --theme-primary-on: #0a1a2a;
+  --theme-accent: #0a1a2a; --theme-border: #c8dde8;
+}
+[data-palette="neumorphic"] {
+  --theme-surface: #e8e6f5; --theme-surface-2: #ffffff;
+  --theme-on-surface: #1d1a2e; --theme-on-surface-dim: #5a536f;
+  --theme-primary: #6b5cff; --theme-primary-on: #ffffff;
+  --theme-accent: #2a2640; --theme-border: #d4d0e6;
+}
+[data-palette="modern"] {
+  --theme-surface: #ffffff; --theme-surface-2: #f4f6fa;
+  --theme-on-surface: #0e2440; --theme-on-surface-dim: #4a6b8a;
+  --theme-primary: #36a8ff; --theme-primary-on: #ffffff;
+  --theme-accent: #0e2440; --theme-border: #e2e6ee;
+}
+[data-palette="coral"] {
+  --theme-surface: #ffeef2; --theme-surface-2: #ffffff;
+  --theme-on-surface: #241420; --theme-on-surface-dim: #6b4a55;
+  --theme-primary: #f25e7a; --theme-primary-on: #ffffff;
+  --theme-accent: #3a1530; --theme-border: #f0d4dd;
+}
+[data-palette="sage"] {
+  --theme-surface: #f1ede0; --theme-surface-2: #ffffff;
+  --theme-on-surface: #2a302a; --theme-on-surface-dim: #5a6b58;
+  --theme-primary: #a8c879; --theme-primary-on: #2a302a;
+  --theme-accent: #3a4030; --theme-border: #d4cdb3;
+}
+[data-palette="royal"] {
+  --theme-surface: #ffffff; --theme-surface-2: #f5f1f8;
+  --theme-on-surface: #241a3d; --theme-on-surface-dim: #5a536f;
+  --theme-primary: #e8b820; --theme-primary-on: #1a1052;
+  --theme-accent: #1a1052; --theme-border: #e2dee8;
+}
+[data-palette="arctic"] {
+  --theme-surface: #e8f4fa; --theme-surface-2: #ffffff;
+  --theme-on-surface: #0a253a; --theme-on-surface-dim: #4a6b7a;
+  --theme-primary: #26d0e8; --theme-primary-on: #0a253a;
+  --theme-accent: #0a253a; --theme-border: #c8dde8;
+}
+[data-palette="monochrome"] {
+  --theme-surface: #ffffff; --theme-surface-2: #f5f5f5;
+  --theme-on-surface: #0a0a0a; --theme-on-surface-dim: #6b6b6b;
+  --theme-primary: #0a0a0a; --theme-primary-on: #ffffff;
+  --theme-accent: #2a2a2a; --theme-border: #e2e2e2;
 }
 
 html,
