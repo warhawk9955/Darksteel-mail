@@ -27,7 +27,7 @@ export default async function AdminLayout({
 
           <nav className="flex flex-col gap-1">
             <NavLink href="/admin">Dashboard</NavLink>
-            <NavLink href="/admin/site">Site Editor</NavLink>
+            <NavLink href="/setup/name">Site Editor</NavLink>
             <NavLink href="/admin/cards">Cards</NavLink>
             <NavLink href="/admin/leads">Leads</NavLink>
             <NavLink href="/admin/account">Account &amp; Billing</NavLink>
