@@ -14,6 +14,7 @@
     "stripe:listen": "stripe listen --project-name default --forward-to http://localhost:3000/api/webhooks/stripe"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.3",
     "next": "15.5.15",
     "react": "19.0.0",

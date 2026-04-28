@@ -17,6 +17,8 @@ const serverSchema = z.object({
   STRIPE_WEBHOOK_SECRET_LIVE: z.string().optional(),
 
   NEXT_PUBLIC_SITE_URL: z.string().url(),
+
+  ADMIN_EMAIL: z.string().email(),
 });
 
 const parsed = serverSchema.safeParse({
@@ -31,6 +33,8 @@ const parsed = serverSchema.safeParse({
   STRIPE_WEBHOOK_SECRET_LIVE: process.env.STRIPE_WEBHOOK_SECRET_LIVE,
 
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL,
 });
 
 if (!parsed.success) {
@@ -70,6 +74,9 @@ export const env = {
   },
   site: {
     url: raw.NEXT_PUBLIC_SITE_URL,
+  },
+  admin: {
+    email: raw.ADMIN_EMAIL.toLowerCase(),
   },
 } as const;
 
