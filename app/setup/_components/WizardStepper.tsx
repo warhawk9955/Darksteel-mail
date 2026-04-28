@@ -14,7 +14,9 @@ export default function WizardStepper({ current }: Props) {
           {WIZARD_STEPS.map((step, i) => {
             const state =
               i < currentIdx ? "done" : i === currentIdx ? "current" : "upcoming";
-            const reachable = step.phase <= 3 && i <= currentIdx + 1;
+            const ready = "ready" in step && step.ready === true;
+            const isShipped = step.phase <= 3 || ready;
+            const reachable = isShipped && i <= currentIdx + 1;
             const NumberCircle = (
               <span
                 className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-[0.7rem] font-mono tracking-wide shrink-0

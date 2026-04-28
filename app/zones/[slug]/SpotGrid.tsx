@@ -31,6 +31,12 @@ export default function SpotGrid({
   const takenGroupSet = new Set(takenGroupIds);
 
   function priceFor(spot: PublicSpot): number {
+    // Spot-level prices (set by the wizard's card builder) win over
+    // the legacy zone-level fallback. Keeps the displayed price in
+    // sync with what /api/checkout will charge.
+    if (spot.founding_price_cents != null && spot.regular_price_cents != null) {
+      return isFoundingRate ? spot.founding_price_cents : spot.regular_price_cents;
+    }
     const founding =
       spot.tier === "featured"
         ? featuredFoundingCents

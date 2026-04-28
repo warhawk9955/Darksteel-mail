@@ -19,23 +19,32 @@ export type PublicSpot = Pick<
   | "url"
   | "phone"
   | "accent_color"
->;
+> & {
+  // Added in M2; not yet in generated types so we declare them here.
+  // PublicSpot rows still load through getSpotsByZone, which selects
+  // these columns explicitly.
+  slot_size?: "small" | "medium" | "large" | "mega" | "massive" | null;
+  face?: "front" | "back" | null;
+  founding_price_cents?: number | null;
+  regular_price_cents?: number | null;
+};
 
 const PUBLIC_FIELDS =
-  "id, zone_id, position, tier, status, category_id, group_id, business_name, offer, url, phone, accent_color";
+  "id, zone_id, position, tier, status, category_id, group_id, business_name, offer, url, phone, accent_color, slot_size, face, founding_price_cents, regular_price_cents";
 
 export async function getSpotsByZone(
   client: SupabaseClient<Database>,
   zoneId: string,
 ): Promise<PublicSpot[]> {
-  const { data, error } = await client
+  const untyped = client as unknown as SupabaseClient;
+  const { data, error } = await untyped
     .from("spots")
     .select(PUBLIC_FIELDS)
     .eq("zone_id", zoneId)
     .order("position", { ascending: true });
 
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as PublicSpot[];
 }
 
 /** Full row — service-role only. Use when we need contact_email,

@@ -8,7 +8,7 @@ import {
   getSpotById,
   isGroupTaken,
 } from "@/lib/db/spots";
-import { computePrice, soldFraction } from "@/lib/pricing";
+import { computeSpotPrice, soldFraction } from "@/lib/pricing";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -82,7 +82,14 @@ export async function POST(req: Request): Promise<Response> {
   if (zSpotsErr) return err(500, "db_error", zSpotsErr.message);
 
   const fraction = soldFraction(zoneSpots ?? []);
-  const price = computePrice(zone, spot.tier, fraction);
+  // Spot-level prices (set by the wizard's card builder) win over the
+  // legacy zone-level columns. Fallback to zone defaults for any spot
+  // missing per-slot prices.
+  const spotForPrice = spot as typeof spot & {
+    founding_price_cents?: number | null;
+    regular_price_cents?: number | null;
+  };
+  const price = computeSpotPrice(zone, spotForPrice, fraction);
 
   // 5. Create the Stripe Checkout session. We do this BEFORE updating
   //    the spot so we have a session_id to store. If the DB update

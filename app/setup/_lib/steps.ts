@@ -8,7 +8,7 @@ export const WIZARD_STEPS = [
   { slug: "contact",  label: "Contact Info",        href: "/setup/contact",  phase: 3 },
   { slug: "look",     label: "Pick Your Look",      href: "/setup/look",     phase: 3 },
   { slug: "branding", label: "Upload Branding",     href: "/setup/branding", phase: 3 },
-  { slug: "card",     label: "Build Your Card",     href: "/setup/card",     phase: 4 },
+  { slug: "card",     label: "Build Your Card",     href: "/setup/card",     phase: 4, ready: true },
   { slug: "domain",   label: "Your Domain",         href: "/setup/domain",   phase: 5 },
   { slug: "review",   label: "Review & Launch",     href: "/setup/review",   phase: 5 },
 ] as const;

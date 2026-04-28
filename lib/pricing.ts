@@ -12,9 +12,9 @@ export interface PriceResult {
 }
 
 /**
- * Given a zone and the current sold-fraction (0..1), return the price
- * cents for the chosen tier. Founding rate applies strictly below the
- * threshold; at or above, regular rate kicks in.
+ * Legacy, M1 path — kept for backward compatibility. Picks the price
+ * from zone-level columns based on tier. Use computeSpotPrice for
+ * anything new.
  */
 export function computePrice(
   zone: Pick<
@@ -46,6 +46,43 @@ export function computePrice(
       : zone.standard_regular_cents,
     isFoundingRate,
   };
+}
+
+/**
+ * Spot-level pricing. After M2, each spot owns founding_price_cents
+ * and regular_price_cents directly (set by the wizard's card builder).
+ * If a spot has neither — e.g. a row that predates the M2 backfill or
+ * was inserted with NULLs — we fall back to the zone-level columns
+ * via computePrice() so old data still resolves to a number.
+ */
+export function computeSpotPrice(
+  zone: Pick<
+    ZoneRow,
+    | "founding_threshold"
+    | "standard_founding_cents"
+    | "standard_regular_cents"
+    | "featured_founding_cents"
+    | "featured_regular_cents"
+  >,
+  spot: {
+    tier: SpotTier;
+    founding_price_cents?: number | null;
+    regular_price_cents?: number | null;
+  },
+  soldFraction: number,
+): PriceResult {
+  const threshold = Number(zone.founding_threshold);
+  const isFoundingRate = soldFraction < threshold;
+
+  if (spot.founding_price_cents != null && spot.regular_price_cents != null) {
+    return {
+      amountCents: isFoundingRate
+        ? spot.founding_price_cents
+        : spot.regular_price_cents,
+      isFoundingRate,
+    };
+  }
+  return computePrice(zone, spot.tier, soldFraction);
 }
 
 /** Sold-fraction = (pending + sold) / total. Pending counts because
